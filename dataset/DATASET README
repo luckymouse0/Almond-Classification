@@ -1,0 +1,26 @@
+The dataset folder structure should be like this:
+
+dataset
+    /train
+        /class-1
+            /image-1.png
+            /image-2.png
+            ...
+            /image-n.png
+        /class-2
+        ...
+        /class-n
+
+    /val
+        /class-1
+        /class-2
+        ...
+        /class-n
+        
+    /test
+        /class-1
+        /class-2
+        ...
+        /class-n
+
+        

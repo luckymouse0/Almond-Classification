@@ -1,3 +1,10 @@
+dataset/train/*/
+dataset/val/*/
+dataset/test/*/
+!dataset/create_toy_dataset.py
+checkpoints/*
+logs/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
