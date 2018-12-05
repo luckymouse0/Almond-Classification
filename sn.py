@@ -26,12 +26,18 @@ NUM_CLASSES = 2
 SAVE_EPOCH = 10  #number of epochs until saving a checkpoint
 PRINT_EPOCH = 5  #number of epochs until printing accuracy
 
-MODEL_NAME = "simplenet"
+MODEL_NAME = "simplenet-aug-128-crop-random"
 TRAIN_PATH = "dataset/train"
 VALIDATION_PATH = "dataset/val"
 TEST_PATH = "dataset/test"
 LOGS_PATH = "./logs/" + MODEL_NAME
 SAVE_PATH = "./checkpoints/" + MODEL_NAME
+
+AUG = True
+RESIZE = None
+CROP = "random"
+
+TEST = "keep"
 
 
 # GLOBAL VARIABLES
@@ -43,8 +49,7 @@ x = tf.placeholder("float32", shape=[None, IMAGE_SIZE, IMAGE_SIZE, CHANNEL], nam
 y_true = tf.placeholder("float32", shape=[None, NUM_CLASSES], name="y_true")
 
 
-def CreateGraph():
-    
+def CreateGraph():    
     """ 
     Implementation of SimpleNet, based on the paper [arXiv:1608.06037]:    
     "Lets keep it simple, Using simple architectures to outperform deeper and more complex architectures"
@@ -214,12 +219,13 @@ def TrainGraph(output):
     
     # Loading training set
     
-    if(not os.path.exists(TRAIN_PATH)): #if directory doesn't exists, then create it
+    if(not os.path.exists(TRAIN_PATH)):
         print("Error reading training directory")
-    
+        return
+        
     # Reading the dataset and creating training data class
     with tf.device('/cpu:0'):
-        tr_data = ImageDataGenerator(TRAIN_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=True, data_aug=True, img_size=IMAGE_SIZE, crop=None, resize="nokeep")
+        tr_data = ImageDataGenerator(TRAIN_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=True, data_aug=AUG, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
 
         # Create an reinitializable iterator given the dataset structure
         iterator = Iterator.from_structure(tr_data.data.output_types, tr_data.data.output_shapes)        
@@ -233,14 +239,15 @@ def TrainGraph(output):
 
     # Loading validation set (if used)
     
-    if(VALIDATION_EPOCH > 0):    
-        if(not os.path.exists(VALIDATION_PATH)): #if directory doesn't exists, then create it
-            print("Error reading validation directory.")
-            return
-            
+    if(VALIDATION_EPOCH > 0):        
         # Reading the dataset and creating validation data class
+        
+        if(not os.path.exists(VALIDATION_PATH)):
+            print("Error reading validation directory")
+            return
+        
         with tf.device('/cpu:0'):
-            val_data = ImageDataGenerator(VALIDATION_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, crop=None, resize="nokeep")
+            val_data = ImageDataGenerator(VALIDATION_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
 
             # Create an reinitializable iterator given the dataset structure
             val_iterator = Iterator.from_structure(val_data.data.output_types, val_data.data.output_shapes)
@@ -369,13 +376,13 @@ def TestGraph():
     
     # Loading test set
     
-    if(not os.path.exists(TEST_PATH)): #if directory doesn't exists, then create it
+    if(not os.path.exists(TEST_PATH)):
         print("Error reading testing directory.")
         return
     
     # Reading the dataset and creating testing data class
     with tf.device('/cpu:0'):
-        test_data = ImageDataGenerator(TEST_PATH, batch_size=1, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, resize="keep")
+        test_data = ImageDataGenerator(TEST_PATH, batch_size=1, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, resize=TEST)
 
         # Create an reinitializable iterator given the dataset structure
         iterator = Iterator.from_structure(test_data.data.output_types, test_data.data.output_shapes)
