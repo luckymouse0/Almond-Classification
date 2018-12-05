@@ -225,7 +225,7 @@ def TrainGraph(output):
         
     # Reading the dataset and creating training data class
     with tf.device('/cpu:0'):
-        tr_data = ImageDataGenerator(TRAIN_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=True, data_aug=AUG, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
+        tr_data = ImageDataGenerator(TRAIN_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, channel=CHANNEL, shuffle=True, data_aug=AUG, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
 
         # Create an reinitializable iterator given the dataset structure
         iterator = Iterator.from_structure(tr_data.data.output_types, tr_data.data.output_shapes)        
@@ -247,7 +247,7 @@ def TrainGraph(output):
             return
         
         with tf.device('/cpu:0'):
-            val_data = ImageDataGenerator(VALIDATION_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
+            val_data = ImageDataGenerator(VALIDATION_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, channel=CHANNEL, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
 
             # Create an reinitializable iterator given the dataset structure
             val_iterator = Iterator.from_structure(val_data.data.output_types, val_data.data.output_shapes)
@@ -382,7 +382,7 @@ def TestGraph():
     
     # Reading the dataset and creating testing data class
     with tf.device('/cpu:0'):
-        test_data = ImageDataGenerator(TEST_PATH, batch_size=1, num_classes=NUM_CLASSES, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, resize=TEST)
+        test_data = ImageDataGenerator(TEST_PATH, batch_size=1, num_classes=NUM_CLASSES, channel=CHANNEL, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, resize=TEST)
 
         # Create an reinitializable iterator given the dataset structure
         iterator = Iterator.from_structure(test_data.data.output_types, test_data.data.output_shapes)
