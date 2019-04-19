@@ -11,8 +11,8 @@ from tensorflow.python.data import Iterator
 
 # CONSTANTS
 
-LEARNING_RATE = 0.0001  #values between 0.001 and 0.00001
-WEIGHT_DECAY = 0.005  #L2 regularization
+LEARNING_RATE = 0.001  #values between 0.001 and 0.00001
+WEIGHT_DECAY = 0.005  #L2 regularization 
 
 BATCH_SIZE = 32  #depends on the GPU memory
 EPOCH = 1000  #0 for testing
@@ -171,7 +171,7 @@ def TrainGraph(output):
     y_pred_cls = tf.argmax(y_pred, axis=1, name="y_pred_cls")    #returns the predicted index
     
     # Cost function
-    cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=y_true)
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(logits=output, labels=tf.stop_gradient(y_true))
     cost = tf.reduce_mean(cross_entropy)
     
     # Optimizer
@@ -222,7 +222,7 @@ def TrainGraph(output):
     if(not os.path.exists(TRAIN_PATH)):
         print("Error reading training directory")
         return
-        
+    
     # Reading the dataset and creating training data class
     with tf.device('/cpu:0'):
         tr_data = ImageDataGenerator(TRAIN_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, channel=CHANNEL, shuffle=True, data_aug=AUG, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
@@ -245,7 +245,7 @@ def TrainGraph(output):
         if(not os.path.exists(VALIDATION_PATH)):
             print("Error reading validation directory")
             return
-        
+            
         with tf.device('/cpu:0'):
             val_data = ImageDataGenerator(VALIDATION_PATH, batch_size=BATCH_SIZE, num_classes=NUM_CLASSES, channel=CHANNEL, shuffle=False, data_aug=False, img_size=IMAGE_SIZE, crop=CROP, resize=RESIZE)
 
@@ -426,7 +426,6 @@ def main():
     
     if(EPOCH == 0):
         TestGraph()
-
         
 if __name__ == "__main__":
     main()
